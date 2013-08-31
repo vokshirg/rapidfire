@@ -1,4 +1,5 @@
 require 'active_model_serializers'
+require 'rapidfire/routes'
 
 module Rapidfire
   class Engine < ::Rails::Engine
