@@ -19,9 +19,9 @@ module Rapidfire
       if !@question.question.position
         lastq=Question.where(:question_group_id => @question_group.id).order("position").last
         if lastq && lastq.position
-          @question.question.position=lastq.position1
+          @question.question.position = lastq.position + 1
         else
-          @question.question.position=1
+          @question.question.position = 1
         end
       end
       save_and_redirect(form_params, :new)
