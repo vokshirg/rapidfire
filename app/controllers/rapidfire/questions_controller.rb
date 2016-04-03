@@ -15,7 +15,14 @@ module Rapidfire
 
     def create
       form_params = params[:question].merge(:question_group => @question_group)
-
+      if !@question.question.position
+        lastq=Question.where(:question_group_id => @question_group.id).order("position").last
+        if lastq && lastq.position
+          @question.question.position=lastq.position1
+        else
+          @question.question.position=1
+        end
+      end
       save_and_redirect(form_params, :new)
     end
 
@@ -36,6 +43,26 @@ module Rapidfire
         format.js
       end
     end
+
+    def move
+      @question = @question_group.questions.find(params[:question_id])
+      lastp=@question.position
+      startp=params[:position].to_i
+      set=Question.where(:question_group_id => @question_group.id).where("position >= ?",startp).where("position < ?",lastp)
+      #can be a big load!
+      set.each do |q|
+        if q.id
+          mquestion=Question.find(q)
+          mquestion.position=mquestion.position+1
+          mquestion.save
+        end
+      end
+      @question.position=startp
+      @question.save
+
+      redirect_to index_location
+    end
+
 
     private
 

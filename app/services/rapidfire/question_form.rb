@@ -20,9 +20,13 @@ module Rapidfire
     attr_accessor :question_group, :question,
       :type, :question_text, :answer_options, :answer_presence,
       :answer_minimum_length, :answer_maximum_length,
-      :answer_greater_than_or_equal_to, :answer_less_than_or_equal_to
+      :answer_greater_than_or_equal_to, :answer_less_than_or_equal_to, :id
 
-    delegate :valid?, :errors, :to => :question
+    delegate :valid?, :errors, :id, :to => :question
+
+    def to_model
+      question
+    end
 
     def initialize(params = {})
       from_question_to_attributes(params[:question]) if params[:question]
@@ -31,11 +35,6 @@ module Rapidfire
     end
 
     def save
-      @question.new_record? ? create_question : update_question
-    end
-
-    private
-    def create_question
       klass = nil
       if QUESTION_TYPES.values.include?(type)
         klass = type.constantize
@@ -44,12 +43,21 @@ module Rapidfire
         return false
       end
 
-      @question = klass.create(to_question_params)
+      @question = @question.becomes(klass)
+      @question.public_send("#{klass.inheritance_column}=", klass.sti_name)
+      @question.assign_attributes to_question_params
+      @question.save
     end
 
-    def update_question
-      @question.update_attributes(to_question_params)
+    def persisted?
+      if @id
+        true
+      else
+        false
+      end
     end
+
+    private
 
     def to_question_params
       {
@@ -76,6 +84,7 @@ module Rapidfire
       self.answer_maximum_length = question.rules[:maximum]
       self.answer_greater_than_or_equal_to = question.rules[:greater_than_or_equal_to]
       self.answer_less_than_or_equal_to    = question.rules[:less_than_or_equal_to]
+      self.id = question.id
     end
   end
 end
