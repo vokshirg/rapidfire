@@ -25,7 +25,9 @@ module Rapidfire
         end
       end
       @question.save
-      save_and_redirect(form_params, :new)
+
+      redirect_to index_location
+      # save_and_redirect(form_params, :new)
     end
 
     def edit
