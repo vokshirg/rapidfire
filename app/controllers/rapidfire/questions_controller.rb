@@ -15,6 +15,7 @@ module Rapidfire
 
     def create
       form_params = params[:question].merge(:question_group => @question_group)
+      @question = QuestionForm.new(form_params)
       if !@question.question.position
         lastq=Question.where(:question_group_id => @question_group.id).order("position").last
         if lastq && lastq.position
