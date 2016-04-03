@@ -24,10 +24,8 @@ module Rapidfire
           @question.question.position = 1
         end
       end
-      # save_and_redirect(form_params, :new)
       @question.save
-      respond_with(@question, location: index_location)
-
+      save_and_redirect(form_params, :new)
     end
 
     def edit
