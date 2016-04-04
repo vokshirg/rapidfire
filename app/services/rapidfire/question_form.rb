@@ -4,6 +4,7 @@ module Rapidfire
       [
        Rapidfire::Questions::Checkbox,
        Rapidfire::Questions::Date,
+       Rapidfire::Questions::Text,
        Rapidfire::Questions::Long,
        Rapidfire::Questions::Numeric,
        Rapidfire::Questions::Radio,
